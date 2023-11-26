@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "applescript-folder-commands"
+version = "0.1.0"
+description = "AppleScript to run based on folder information"
+authors = ["7rikaz_h785 <7rikaz.h785.stat2ltas41lcijad@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+
+[tool.poetry.group.dev.dependencies]
+tomlkit = "^0.12.3"
+pre-commit = "^3.5.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AMApplicationBuild</key>
+	<string>521.1</string>
+	<key>AMApplicationVersion</key>
+	<string>2.10</string>
+	<key>AMDocumentVersion</key>
+	<string>2</string>
+	<key>actions</key>
+	<array>
+		<dict>
+			<key>action</key>
+			<dict>
+				<key>AMAccepts</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Optional</key>
+					<true/>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>AMActionVersion</key>
+				<string>1.0.2</string>
+				<key>AMApplication</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>AMParameterProperties</key>
+				<dict>
+					<key>source</key>
+					<dict/>
+				</dict>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Run AppleScript.action</string>
+				<key>ActionName</key>
+				<string>AppleScriptを実行</string>
+				<key>ActionParameters</key>
+				<dict>
+					<key>source</key>
+					<string>(********************************************************
+# ghRepoCloneBranch.workflow
+
+AppleScript to clone the specified repository and branch based on the list of repositories obtained by the "gh" command and "jq" command
+
+## Prerequisite
+
+- You must have installed GitHub CLI.
+- Must be authenticated by "gh auth login"
+- You must have installed jq
+
+## Detail
+
+- Repository list is executed by ShellScript(~/scripts/gh_list.sh)
+- Clone the specified repository under the folder where the quick action was executed
+
+## Usage
+
+1. Execute the following command to create "~/scripts/gh_list.sh"(#1)
+
+    ```bash
+    mkdir -p ~/scripts
+    echo "/usr/local/bin/gh repo list --limit 100 | awk '{print \$1}'" &gt; ~/scripts/gh_list.sh
+    chmod +x ~/scripts/gh_list.sh
+    ```
+
+2. Save "ghRepoCloneBranch.workflow" to "~/Library/Services" folder
+3. Select the folder you want to save, right click and select "Quick Actions" &gt; "ghRepoCloneBranch". (#2)(#3)
+
+## Note
+
+- #1. The maximum number of repositories to be acquired should be changed as necessary.
+- #2. If you do not see "ghRepoCloneBranch", open Finder and select "Services" &gt; "Service Settings" from the "Finder" menu,
+     Make sure "get github repository" is checked in the "Files and Folders" section.
+- #3. It will not save in username/repository format.
+     It will not be saved in username/repository format.
+     If you want to save in username/repository format, set USER_REPO_FMT to ture.
+- #4. If the paths of the "gh" and "jq" commands are different, change them in property.
+********************************************************)
+property USER_REPO_FMT : false
+property GH_CMD_PATH : "/usr/local/bin/gh"
+property JQ_CMD_PATH : "/usr/local/bin/jq"
+
+on run {input, parameters}
+	-- Convert input (the path of the folder where the quick action was executed) to a POSIX format (slash-separated) string and set it to the currentFolder variable.
+	set currentFolder to POSIX path of input
+	-- Use the do shell script command to execute the shell script (~/scripts/gh_list.sh) and set the result to the repoList variable.
+	set repoList to do shell script "~/scripts/gh_list.sh"
+	-- Split the contents of repoList into lines and set it to the repoArray variable.
+	set repoArray to paragraphs of repoList
+	-- Use the choose from list command to let the user select from the list of repoArray, and set the selected repository to the selectedRepo variable.
+	set selectedRepo to choose from list repoArray with prompt "Select a repository:"
+	-- If the user selects a repository and presses OK
+	if selectedRepo is not false then
+		-- Get the first item of the selectedRepo list
+		set selectedRepoName to item 1 of selectedRepo
+		-- Creates a list of branches that exist on a given branch
+		set getRepoBranchListCmd to GH_CMD_PATH &amp; " api repos/" &amp; selectedRepoName &amp; "/branches | " &amp; JQ_CMD_PATH &amp; " -r '.[].name'"
+		set getRepoBranchListResult to do shell script getRepoBranchListCmd
+		-- Split the contents of getRepoBranchListResult into lines and set it to the branchList variable.
+		set branchList to paragraphs of getRepoBranchListResult
+		-- Use the choose from list command to let the user select from the list of branchList, and set the selected repository to the selectedBranch variable.
+		set selectedBranch to choose from list branchList with prompt "Select a branch:"
+		-- If the user selects a branch and presses OK
+		if selectedBranch is not false then
+			-- Get the first item of the selectedBranch list
+			set selectedBranchName to item 1 of selectedBranch
+		else
+			return
+		end if
+		-- Set the name of the selected repository (the first item in the list) to the repoName variable
+		set repoName to item 1 of selectedRepo
+		-- To split the repository name by slash, set the text item delimiter to slash (/)
+		set AppleScript's text item delimiters to "/"
+		-- Split the repository name by slash and set the result to the repoNameItems variable
+		set repoNameItems to text items of repoName
+		-- Set the second item of the split repository name (the part after the username) to the repoName variable
+		if not USER_REPO_FMT then
+			set repoName to item 2 of repoNameItems
+		end if
+		-- Create a command to clone the repository and set it to the cloneCommand variable
+		set cloneCommand to GH_CMD_PATH &amp; " repo clone " &amp; item 1 of selectedRepo &amp; " " &amp; currentFolder &amp; repoName &amp; " -- --branch " &amp; selectedBranchName
+		-- Check if the repository already exists
+		set checkCommand to "if [ -d " &amp; currentFolder &amp; repoName &amp; " ]; then echo 'exists'; else echo 'not exists'; fi"
+		set checkResult to do shell script checkCommand
+		if checkResult is equal to "exists" then
+			-- If the repository already exists, display a dialog and exit the script
+			display dialog "Error: Repository already exists. Exit the script."
+			return
+		end if
+		-- Display a dialog box showing the command to be executed
+		display dialog "Executing: " &amp; cloneCommand
+		-- Execute the created command to clone the repository
+		do shell script cloneCommand
+		-- Display a dialog box showing the selected repository and the path to the clone
+		display dialog "You selected: " &amp; item 1 of selectedRepo &amp; "
+
+The repository has been cloned to:
+" &amp; currentFolder &amp; repoName &amp; "
+
+Branch: " &amp; selectedBranchName
+	end if
+end run
+</string>
+				</dict>
+				<key>BundleIdentifier</key>
+				<string>com.apple.Automator.RunScript</string>
+				<key>CFBundleVersion</key>
+				<string>1.0.2</string>
+				<key>CanShowSelectedItemsWhenRun</key>
+				<false/>
+				<key>CanShowWhenRun</key>
+				<true/>
+				<key>Category</key>
+				<array>
+					<string>AMCategoryUtilities</string>
+				</array>
+				<key>Class Name</key>
+				<string>RunScriptAction</string>
+				<key>InputUUID</key>
+				<string>13F4D5CA-2EB6-48FD-8685-9C2F70565CAB</string>
+				<key>Keywords</key>
+				<array>
+					<string>実行</string>
+				</array>
+				<key>OutputUUID</key>
+				<string>DD660328-927F-4481-B6D5-92AE0A2807E2</string>
+				<key>UUID</key>
+				<string>C30E61CA-8DF4-492B-938F-21FB44C5DF95</string>
+				<key>UnlocalizedApplications</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<string>on run {input, parameters}
+
+	(* Your script goes here *)
+
+	return input
+end run</string>
+						<key>name</key>
+						<string>source</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+				</dict>
+				<key>isViewVisible</key>
+				<integer>1</integer>
+				<key>location</key>
+				<string>612.000000:931.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
+			</dict>
+			<key>isViewVisible</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>connectors</key>
+	<dict/>
+	<key>workflowMetaData</key>
+	<dict>
+		<key>applicationBundleID</key>
+		<string>com.apple.finder</string>
+		<key>applicationBundleIDsByPath</key>
+		<dict>
+			<key>/System/Library/CoreServices/Finder.app</key>
+			<string>com.apple.finder</string>
+		</dict>
+		<key>applicationPath</key>
+		<string>/System/Library/CoreServices/Finder.app</string>
+		<key>applicationPaths</key>
+		<array>
+			<string>/System/Library/CoreServices/Finder.app</string>
+		</array>
+		<key>backgroundColorName</key>
+		<string>blackColor</string>
+		<key>inputTypeIdentifier</key>
+		<string>com.apple.Automator.fileSystemObject</string>
+		<key>outputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>presentationMode</key>
+		<integer>15</integer>
+		<key>processesInput</key>
+		<integer>0</integer>
+		<key>serviceApplicationBundleID</key>
+		<string>com.apple.finder</string>
+		<key>serviceApplicationPath</key>
+		<string>/System/Library/CoreServices/Finder.app</string>
+		<key>serviceInputTypeIdentifier</key>
+		<string>com.apple.Automator.fileSystemObject</string>
+		<key>serviceOutputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>serviceProcessesInput</key>
+		<integer>0</integer>
+		<key>systemImageName</key>
+		<string>NSActionTemplate</string>
+		<key>useAutomaticInputType</key>
+		<integer>0</integer>
+		<key>workflowTypeIdentifier</key>
+		<string>com.apple.Automator.servicesMenu</string>
+	</dict>
+</dict>
+</plist>
