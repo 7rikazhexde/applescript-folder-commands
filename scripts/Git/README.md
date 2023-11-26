@@ -26,7 +26,7 @@ AppleScript to clone the specified repository and branch based on the list of re
 
 ## Demo
 
-![ghRepoCloneBranch.gif](../../.demofile/ghRepoCloneBranch.gif)
+![ghRepoCloneBranch.gif](../../.demofile/demo_ghRepoCloneBranch.gif)
 
 ## Prerequisite
 
@@ -119,7 +119,7 @@ Applescript to execute "git pull" commands based on folder path information
 
 ## Demo
 
-![gitPull.gif](../../.demofile/gitPull.gif)
+![gitPull.gif](../../.demofile/demo_gitPull.gif)
 
 ## Prerequisite
 

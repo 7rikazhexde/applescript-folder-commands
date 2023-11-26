@@ -13,7 +13,7 @@ Applescript to execute "code" commands based on folder path information
 
 ## Demo
 
-![actVSCode.gif](../../.demofile/actVSCode.gif)
+![actVSCode.gif](../../.demofile/demo_actVSCode.gif)
 
 ## Prerequisite
 

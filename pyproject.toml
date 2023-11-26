@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "applescript-folder-commands"
-version = "0.1.0"
+version = "0.1.1"
 description = "AppleScript to run based on folder information"
 authors = ["7rikaz_h785 <7rikaz.h785.stat2ltas41lcijad@gmail.com>"]
 license = "MIT"
