@@ -19,6 +19,12 @@
   - [Prerequisite](#prerequisite-2)
   - [Usage](#usage-2)
   - [Verified Version](#verified-version-2)
+- [ghRepoCloneBranchBy.workflow](#ghrepoclonebranchbyworkflow)
+  - [Demo](#demo-2)
+  - [Prerequisite](#prerequisite-3)
+  - [Usage](#usage-3)
+  - [Note](#note-2)
+  - [Verified Version](#verified-version-3)
 
 # ghRepoCloneBranch.workflow
 
@@ -129,6 +135,44 @@ You must have installed git.
 
 1. Save "gitPull.workflow" to "~/Library/Services" folder
 2. Select the folder you want to save, right click and select "Quick Actions" > "gitPull".
+
+## Verified Version
+
+- macOS Ventura
+- version 13.6.1
+
+---
+
+# ghRepoCloneBranchBy.workflow
+
+Create a list of repositories registered on GitHub by executing curl/jq command with topic and number of items specified. In addition, based on the list, an applescript to clone the specified repository and branch.
+
+## Demo
+
+![demo_ghRepoCloneBranchBy.gif](../../.demofile/demo_ghRepoCloneBranchBy.gif)
+
+## Prerequisite
+
+- You must have installed curl
+- You must have installed GitHub CLI.
+- Must be authenticated by "gh auth login"
+- You must have installed jq
+
+## Usage
+
+1. Save "ghRepoCloneBranchByworkflow" to "~/Library/Services" folder
+2. Select the folder you want to save, right click and select "Quick Actions" > "ghRepoCloneBranchBy". (#1)(#2)
+3. Right-click in the folder where you want to save the repository and run the ghRepoCloneBranchBy service
+4. Enter the topic and the number of cases, select the repository, and clone the selected repository to the folder executed in step 3.(#3)
+
+## Note
+
+- #1. If you do not see "ghRepoCloneBranch", open Finder and select "Services" > "Service Settings" from the "Finder" menu,
+     Make sure "get github repository" is checked in the "Files and Folders" section.
+- #2. It will not save in username/repository format.
+     It will not be saved in username/repository format.
+     If you want to save in username/repository format, set USER_REPO_FMT to ture.
+- #3. If the paths of the "curl", "jq" and "gh" commands are different, change them in property.
 
 ## Verified Version
 

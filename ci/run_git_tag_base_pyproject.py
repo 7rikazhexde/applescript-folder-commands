@@ -198,4 +198,7 @@ if __name__ == "__main__":  # pragma: no cover
     # Create a new tag
     if remote_tag_checker_flag is True and local_tag_checker_flag is True:
         subprocess.run(["git", "tag", new_tag])
-    subprocess.run(["git", "tag"])
+        subprocess.run(["git", "tag"])
+    else:
+        error_message = "git tag diff error"
+        sys.exit(error_message)

@@ -11,6 +11,7 @@ AppleScript to run based on folder information
     - [ghRepoClone.workflow](#ghrepocloneworkflow)
     - [ghRepoCloneBranch.workflow](#ghrepoclonebranchworkflow)
     - [gitPull.workflow](#gitpullworkflow)
+    - [ghRepoCloneBranchBy.workflow](#ghrepoclonebranchbyworkflow)
   - [For VSCode](#for-vscode)
     - [actVSCode.workflow](#actvscodeworkflow)
 
@@ -29,6 +30,10 @@ AppleScript to clone the specified repository and branch based on the list of re
 ### [gitPull.workflow](./scripts/Git/README.md#gitpullworkflow)
 
 Applescript to execute "git pull" commands based on folder path information
+
+### [ghRepoCloneBranchBy.workflow](./scripts/Git/README.md#ghRepoCloneBranchByworkflow)
+
+Create a list of repositories registered on GitHub by executing curl/jq command with topic and number of items specified. In addition, based on the list, an applescript to clone the specified repository and branch.
 
 ## For VSCode
 
