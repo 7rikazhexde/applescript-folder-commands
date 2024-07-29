@@ -9,7 +9,7 @@
 
 # actVScode.workflow
 
-Applescript to execute "code" commands based on folder path information
+AppleScript to execute "code" commands based on folder path information
 
 ## Demo
 
@@ -21,10 +21,10 @@ You must have installed Visual Studio Code.
 
 ## Usage
 
-1. Save "actVSCode.workflow" to "~/Library/Services" folder
+1. Save "actVSCode.workflow" to "~/Library/Services" folder or Save in any folder and double-click to allow installation.
 2. Select the folder you want to save, right click and select "Quick Actions" > "actVScode".
 
 ## Verified Version
 
 - macOS Ventura
-- version 13.6.1
+- version 13.6.7

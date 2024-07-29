@@ -55,7 +55,7 @@ AppleScript to clone the specified repository and branch based on the list of re
     chmod +x ~/scripts/gh_list.sh
     ```
 
-2. Save "ghRepoCloneBranch.workflow" to "~/Library/Services" folder
+2. Save "ghRepoCloneBranch.workflow" to "~/Library/Services" folder or Save in any folder and double-click to allow installation.
 3. Select the folder you want to save, right click and select "Quick Actions" > "ghRepoCloneBranch". (#2)(#3)
 
 ## Note
@@ -99,7 +99,7 @@ AppleScript to clone the specified repository based on the list of repositories 
     chmod +x ~/scripts/gh_list.sh
     ```
 
-2. Save "ghRepoClone.workflow" to "~/Library/Services" folder
+2. Save "ghRepoClone.workflow" to "~/Library/Services" folder or Save in any folder and double-click to allow installation.
 3. Select the folder you want to save, right click and select "Quick Actions" > "ghRepoClone". (#2)(#3)
 
 ## Note
@@ -115,13 +115,13 @@ AppleScript to clone the specified repository based on the list of repositories 
 ## Verified Version
 
 - macOS Ventura
-- version 13.6.1
+- version 13.6.7
 
 ---
 
 # gitPull.workflow
 
-Applescript to execute "git pull" commands based on folder path information
+AppleScript to execute "git pull" commands based on folder path information
 
 ## Demo
 
@@ -139,7 +139,7 @@ You must have installed git.
 ## Verified Version
 
 - macOS Ventura
-- version 13.6.1
+- version 13.6.7
 
 ---
 
@@ -160,7 +160,7 @@ Create a list of repositories registered on GitHub by executing curl/jq command 
 
 ## Usage
 
-1. Save "ghRepoCloneBranchByworkflow" to "~/Library/Services" folder
+1. Save "ghRepoCloneBranchBy.workflow" to "~/Library/Services" folder or Save in any folder and double-click to allow installation.
 2. Select the folder you want to save, right click and select "Quick Actions" > "ghRepoCloneBranchBy". (#1)(#2)
 3. Right-click in the folder where you want to save the repository and run the ghRepoCloneBranchBy service
 4. Enter the topic and the number of cases, select the repository, and clone the selected repository to the folder executed in step 3.(#3)
@@ -177,4 +177,4 @@ Create a list of repositories registered on GitHub by executing curl/jq command 
 ## Verified Version
 
 - macOS Ventura
-- version 13.6.1
+- version 13.6.7

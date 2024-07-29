@@ -1,10 +1,11 @@
 [tool.poetry]
 name = "applescript-folder-commands"
-version = "0.1.2"
+version = "0.1.4"
 description = "AppleScript to run based on folder information"
 authors = ["7rikaz_h785 <7rikaz.h785.stat2ltas41lcijad@gmail.com>"]
 license = "MIT"
 readme = "README.md"
+package-mode = false
 
 [tool.poetry.dependencies]
 python = "^3.12"

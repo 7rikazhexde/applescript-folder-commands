@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>AMApplicationBuild</key>
+	<string>521.1</string>
+	<key>AMApplicationVersion</key>
+	<string>2.10</string>
+	<key>AMDocumentVersion</key>
+	<string>2</string>
+	<key>actions</key>
+	<array>
+		<dict>
+			<key>action</key>
+			<dict>
+				<key>AMAccepts</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Optional</key>
+					<true/>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>AMActionVersion</key>
+				<string>1.0.2</string>
+				<key>AMApplication</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>AMParameterProperties</key>
+				<dict>
+					<key>source</key>
+					<dict/>
+				</dict>
+				<key>AMProvides</key>
+				<dict>
+					<key>Container</key>
+					<string>List</string>
+					<key>Types</key>
+					<array>
+						<string>com.apple.applescript.object</string>
+					</array>
+				</dict>
+				<key>ActionBundlePath</key>
+				<string>/System/Library/Automator/Run AppleScript.action</string>
+				<key>ActionName</key>
+				<string>AppleScriptを実行</string>
+				<key>ActionParameters</key>
+				<dict>
+					<key>source</key>
+					<string>(********************************************************
+# show_grid_qt.workflow
+AppleScript for arranging video files stored in specified folders in a grid format.
+
+## Note
+- Target files are mov and mp4.
+- The script depends on the file size of the video. Check the adjustable parameters and adjust as necessary.
+********************************************************)
+
+on run {input, parameters}
+	--set videoFolder to "/Users/Guest/Public/test/video/sample1" as POSIX file
+	set videoFolder to input
+	--set videoFolder to choose folder with prompt "Please select a folder："
+	set videoFolderPath to POSIX path of videoFolder
+
+	-- Adjustable parameters.
+	-- videoWidth, videoHeight: original video size (*fixed value dependent on file size).
+	-- horizontalMargin: horizontal spacing between windows (*fixed value depending on file size).
+	-- verticalMargin: vertical spacing between windows (*fixed value depending on file size).
+	-- offsetX, offsetY: overall alignment position adjustment (*0,0 for upper left corner).
+	-- adjustSize: fine adjustment of the vertical position of the lower window (*fixed value.)
+	-- Set to a value of 25 or higher (*25 corresponds to an offset of 0 pixels. Fine-tune as required).
+
+	-- halfSizeFlag: video reduction allowed (*change if necessary).
+
+	-- Configuration for video (*Use uncommented out, depending on file size).
+	-- For 640x360 (reduced to 320x180)
+	--(*
+	set videoWidth to 640
+	set videoHeight to 360
+	set horizontalMargin to 5
+	set verticalMargin to 30
+	set offsetX to 100
+	set offsetY to 100
+	set adjustSize to 25
+	set halfSizeFlag to true
+	--*)
+
+	-- For 640x360
+	(*
+	set videoWidth to 640
+	set videoHeight to 360
+	set horizontalMargin to 0
+	set verticalMargin to 25
+	set offsetX to 100
+	set offsetY to 100
+	set adjustSize to 25
+	set halfSizeFlag to false
+	*)
+
+	-- For 486x360 (reduced to 343x180)
+	(*
+	set videoWidth to 486
+	set videoHeight to 360
+	set horizontalMargin to 83
+	set verticalMargin to 85
+	set offsetX to 100
+	set offsetY to 200
+	set adjustSize to 25
+	set halfSizeFlag to true
+	*)
+
+	-- Call function to arrange windows in grid
+	my arrangeWindowsInGrid(videoFolder, videoWidth, videoHeight, horizontalMargin, verticalMargin, offsetX, offsetY, adjustSize, halfSizeFlag)
+
+	-- Optionally call function to play all videos simultaneously
+	-- Comment out the next line if you don't want automatic playback
+	delay 2
+	my playAllVideosSimultaneously()
+end run
+
+on arrangeWindowsInGrid(videoFolder, videoWidth, videoHeight, horizontalMargin, verticalMargin, offsetX, offsetY, adjustSize, halfSizeFlag)
+	tell application "Finder"
+		set videoFiles to files of folder videoFolder whose name extension is in {"mp4", "mov"}
+	end tell
+
+	if (count of videoFiles) is 0 then
+		display dialog "No mp4 or mov files were found in the specified folder." buttons {"OK"} default button "OK"
+	else
+		set num to count of videoFiles
+		set gridSize to (num ^ 0.5) as integer -- Integer part of root n
+
+		tell application "QuickTime Player"
+			activate
+			set windowCount to 0
+			repeat with videoFile in videoFiles
+				open videoFile
+				delay 0.5 -- Wait for the file to open.
+				set windowCount to windowCount + 1
+				if windowCount is num then exit repeat
+			end repeat
+
+			-- Arrange windows
+			tell application "System Events"
+				tell process "QuickTime Player"
+					-- Calculation of window size
+					if halfSizeFlag is true then
+						set windowWidth to videoWidth / 2
+						set windowHeight to videoHeight / 2
+					else
+						set windowWidth to videoWidth
+						set windowHeight to videoHeight
+					end if
+
+					set windowList to windows
+					set totalWindows to count of windowList
+					repeat with i from 1 to totalWindows
+						set thisWindow to item (totalWindows - i + 1) of windowList
+
+						-- Row and column calculations
+						(*
+							For 3x3 grid (gridSize = 3)
+							For i = 1: (1-1) div 3 = 0, (1-1) mod 3 = 0 → (row 0, column 0) top left
+							For i = 2: (2-1) div 3 = 0, (2-1) mod 3 = 1 → (row 0, column 1) top centre
+							For i = 3: (3-1) div 3 = 0, (3-1) mod 3 = 2 → (row 0, column 2) top right
+							For i = 4: (4 -1) div 3 = 1, (4-1) mod 3 = 0 → (row 1, column 0) middle left
+							...
+							For i = 9: (9-1) div 3 = 2, (9-1) mod 3 = 2 → (row 2, column 2) bottom right
+						*)
+						set rowIndex to (i - 1) div gridSize
+						set colIndex to (i - 1) mod gridSize
+
+						set xPos to offsetX + (windowWidth + horizontalMargin) * colIndex
+						set yPos to offsetY + (windowHeight + verticalMargin - adjustSize) * rowIndex
+
+						set position of thisWindow to {xPos, yPos}
+						set size of thisWindow to {windowWidth, windowHeight}
+					end repeat
+				end tell
+			end tell
+		end tell
+	end if
+end arrangeWindowsInGrid
+
+on playAllVideosSimultaneously()
+	tell application "QuickTime Player"
+		set allDocuments to documents
+		repeat with eachDocument in allDocuments
+			tell eachDocument
+				play
+			end tell
+		end repeat
+	end tell
+end playAllVideosSimultaneously</string>
+				</dict>
+				<key>BundleIdentifier</key>
+				<string>com.apple.Automator.RunScript</string>
+				<key>CFBundleVersion</key>
+				<string>1.0.2</string>
+				<key>CanShowSelectedItemsWhenRun</key>
+				<false/>
+				<key>CanShowWhenRun</key>
+				<true/>
+				<key>Category</key>
+				<array>
+					<string>AMCategoryUtilities</string>
+				</array>
+				<key>Class Name</key>
+				<string>RunScriptAction</string>
+				<key>InputUUID</key>
+				<string>E927F69B-EFC8-43BA-8979-8C67CCFAFEFD</string>
+				<key>Keywords</key>
+				<array>
+					<string>実行</string>
+				</array>
+				<key>OutputUUID</key>
+				<string>52E7A92F-78A6-422E-B61C-608739DF4AC5</string>
+				<key>UUID</key>
+				<string>6706AC5B-F549-4F42-BEBF-7614B018533E</string>
+				<key>UnlocalizedApplications</key>
+				<array>
+					<string>Automator</string>
+				</array>
+				<key>arguments</key>
+				<dict>
+					<key>0</key>
+					<dict>
+						<key>default value</key>
+						<string>on run {input, parameters}
+
+	(* Your script goes here *)
+
+	return input
+end run</string>
+						<key>name</key>
+						<string>source</string>
+						<key>required</key>
+						<string>0</string>
+						<key>type</key>
+						<string>0</string>
+						<key>uuid</key>
+						<string>0</string>
+					</dict>
+				</dict>
+				<key>isViewVisible</key>
+				<integer>1</integer>
+				<key>location</key>
+				<string>498.250000:828.000000</string>
+				<key>nibPath</key>
+				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
+			</dict>
+			<key>isViewVisible</key>
+			<integer>1</integer>
+		</dict>
+	</array>
+	<key>connectors</key>
+	<dict/>
+	<key>workflowMetaData</key>
+	<dict>
+		<key>applicationBundleID</key>
+		<string>com.apple.finder</string>
+		<key>applicationBundleIDsByPath</key>
+		<dict>
+			<key>/System/Library/CoreServices/Finder.app</key>
+			<string>com.apple.finder</string>
+		</dict>
+		<key>applicationPath</key>
+		<string>/System/Library/CoreServices/Finder.app</string>
+		<key>applicationPaths</key>
+		<array>
+			<string>/System/Library/CoreServices/Finder.app</string>
+		</array>
+		<key>inputTypeIdentifier</key>
+		<string>com.apple.Automator.fileSystemObject.folder</string>
+		<key>outputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>presentationMode</key>
+		<integer>15</integer>
+		<key>processesInput</key>
+		<integer>0</integer>
+		<key>serviceApplicationBundleID</key>
+		<string>com.apple.finder</string>
+		<key>serviceApplicationPath</key>
+		<string>/System/Library/CoreServices/Finder.app</string>
+		<key>serviceInputTypeIdentifier</key>
+		<string>com.apple.Automator.fileSystemObject.folder</string>
+		<key>serviceOutputTypeIdentifier</key>
+		<string>com.apple.Automator.nothing</string>
+		<key>serviceProcessesInput</key>
+		<integer>0</integer>
+		<key>systemImageName</key>
+		<string>NSActionTemplate</string>
+		<key>useAutomaticInputType</key>
+		<integer>0</integer>
+		<key>workflowTypeIdentifier</key>
+		<string>com.apple.Automator.servicesMenu</string>
+	</dict>
+</dict>
+</plist>

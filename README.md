@@ -14,6 +14,8 @@ AppleScript to run based on folder information
     - [ghRepoCloneBranchBy.workflow](#ghrepoclonebranchbyworkflow)
   - [For VSCode](#for-vscode)
     - [actVSCode.workflow](#actvscodeworkflow)
+  - [For QuickTime](#for-quicktime)
+    - [show\_grid\_qt.workflow](#show_grid_qtworkflow)
 
 # Scripts
 
@@ -29,7 +31,7 @@ AppleScript to clone the specified repository and branch based on the list of re
 
 ### [gitPull.workflow](./scripts/Git/README.md#gitpullworkflow)
 
-Applescript to execute "git pull" commands based on folder path information
+AppleScript to execute "git pull" commands based on folder path information
 
 ### [ghRepoCloneBranchBy.workflow](./scripts/Git/README.md#ghRepoCloneBranchByworkflow)
 
@@ -39,4 +41,10 @@ Create a list of repositories registered on GitHub by executing curl/jq command 
 
 ### [actVSCode.workflow](./scripts/VSCode/README.md#actvscodeworkflow)
 
-Applescript to execute "code" commands based on folder path information
+AppleScript to execute "code" commands based on folder path information
+
+## For QuickTime
+
+### [show_grid_qt.workflow](./scripts/QuickTime/README.md#show_grid_qtworkflow)
+
+AppleScript for arranging video files stored in specified folders in a grid format.

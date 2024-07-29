@@ -4,7 +4,7 @@ fail_fast: true
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     # Specify version or tag to use (as of 23.5.31)
-    rev: v4.4.0
+    rev: v4.6.0
     hooks:
       # Remove spaces at end of lines except markdown
       - id: trailing-whitespace
@@ -22,7 +22,7 @@ repos:
   # https://python-poetry.org/docs/pre-commit-hooks/#usage
   - repo: https://github.com/python-poetry/poetry
     # Cannot be executed with local designation (as of 23.11.25)
-    rev: 1.7.1
+    rev: 1.8.3
     hooks:
       - id: poetry-check
         verbose: true
@@ -40,7 +40,7 @@ repos:
   # Reference: https://github.com/DavidAnson/markdownlint-cli2#overview
   # > markdownlint-cli is a traditional command-line interface for markdownlint.
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: v0.36.0
+    rev: v0.41.0
     hooks:
       - id: markdownlint
         args: ["--config", ".markdownlint.jsonc", "README.md", "scripts/**/*.md"]

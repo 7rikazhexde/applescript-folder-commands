@@ -64,11 +64,6 @@ You must have installed Visual Studio Code.
 
 1. Save "actVSCode.workflow" to "~/Library/Services" folder
 2. Select the folder you want to save, right click and select "Quick Actions" &gt; "actVScode".
-
-## Verified Version
-
-- macOS Ventura
-- version 13.6.1
 ********************************************************)
 property VSCODE_CMD_PATH : "/usr/local/bin/code"
 
@@ -131,7 +126,7 @@ end run</string>
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
-				<string>612.000000:804.000000</string>
+				<string>505.750000:368.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
