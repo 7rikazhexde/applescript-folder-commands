@@ -78,11 +78,6 @@ Create a list of repositories registered on GitHub by executing curl/jq command 
      It will not be saved in username/repository format.
      If you want to save in username/repository format, set USER_REPO_FMT to ture.
 - #3. If the paths of the "curl", "jq" and "gh" commands are different, change them in property.
-
-## Verified Version
-
-- macOS Ventura
-- version 13.6.1
 ********************************************************)
 property USER_REPO_FMT : false
 property CURL_CMD_PATH : "/usr/bin/curl"
@@ -226,7 +221,7 @@ end run</string>
 				<key>isViewVisible</key>
 				<integer>1</integer>
 				<key>location</key>
-				<string>529.000000:652.000000</string>
+				<string>505.750000:368.000000</string>
 				<key>nibPath</key>
 				<string>/System/Library/Automator/Run AppleScript.action/Contents/Resources/Base.lproj/main.nib</string>
 			</dict>
